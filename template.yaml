@@ -1,0 +1,71 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: 'AWS::Serverless-2016-10-31'
+Description: >-
+  Lambda to update security groups with cloudfront public ip ranges. You need two security groups 
+   1. Security group which will contain CF global ranges 
+   1. Security group which will contain CF regional ranges 
+   Note that CF has >60 ip ranges to be whitelisted, and there is a limit of 60 rules/SG. hence you need to have 2 SG from origin
+  
+  
+Parameters:
+  globalSGName:
+    Description: Name of security group to update with CF global ip ranges
+    Type: AWS::EC2::SecurityGroup::Id
+    Default: sg-0c509d5382a4e067c
+
+  regionalSGName:
+    Description: Name of security group to update with CF regional ip ranges
+    Type: AWS::EC2::SecurityGroup::Id
+    Default: sg-0d94af7ace021279a
+
+  S3Bucket:
+    Description: BucketName where code zip file is uploaded
+    Type: String
+    Default: cfsgupdatedemonv
+
+  S3Path:
+    Description: Path where code zip file is uploaded
+    Type: String
+    Default: code.zip
+
+
+Resources:
+  lambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+      - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+      - 'arn:aws:iam::aws:policy/AmazonSNSFullAccess'
+      Policies:
+      - PolicyName: ec2permission
+        PolicyDocument:
+          Statement:          
+          - Effect: Allow
+            Action:
+              - ec2:DescribeSecurityGroups
+              - ec2:AuthorizeSecurityGroupIngress
+              - ec2:RevokeSecurityGroupIngress
+            Resource: '*'
+
+  sgUpdateLambda:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Runtime: python3.6
+      Timeout: 60
+      MemorySize: 512
+      Handler: index.lambda_handler
+      Environment:
+        Variables:
+          GlobalSGName: !Ref globalSGName
+          RegionalSGName: !Ref regionalSGName
+      Role: !GetAtt lambdaRole.Arn
+      CodeUri:
+        Bucket: !Ref S3Bucket
+        Key : !Ref S3Path

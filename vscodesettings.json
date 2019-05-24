@@ -1,0 +1,29 @@
+{
+  "editor.tabSize": 2,
+  "editor.suggestSelection": "first",
+  "[yaml]": {
+      "editor.insertSpaces": true,
+       "editor.tabSize": 2,
+      "editor.detectIndentation": false,
+      "editor.defaultFormatter": "redhat.vscode-yaml",
+    },
+    "yaml.customTags": [
+      "!Base64 mapping",
+      "!Cidr sequence",
+      "!FindInMap sequence",
+      "!GetAtt",
+      "!GetAZs",
+      "!ImportValue",
+      "!Join sequence",
+      "!Ref", 
+      "!Select sequence",
+      "!Split sequence",
+      "!Sub",
+      "!Transform mapping",
+      "!Not sequence",
+      "!Equals sequence"
+  ],
+  "aws.samcli.location": "/usr/local/bin/sam",
+  "python.jediEnabled": false
+  
+}
