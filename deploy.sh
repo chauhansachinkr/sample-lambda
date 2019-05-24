@@ -4,8 +4,8 @@
 # Alternatively use Jenkins pipeline for your deployment. 
 
 #CHANGE ME
-GLOBAL_SG_NAME=sg-0c509d5382a4e067c
-REGION_SG_NAME=sg-0d94af7ace021279a
+GLOBAL_SG_NAME=sg-345
+REGION_SG_NAME=sg-2344
 
 ENV='dev'
 UNIQUENAME="cf-sg-update-${ENV}"
